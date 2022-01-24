@@ -27,6 +27,7 @@
 *自控点	 
 	codebook qn506
 	tab1 qn506 qn507 qn501 qn502  qn504 qn503 qn505,m
+	codebook qn505
 *c_qn506 c_qn507 c_qn501 c_qn502  c_qn504 需要反向处理
 *c_qn503 c_qn505
 	foreach x of varlist qn506 qn507 qn501 qn502  qn504 qn503 qn505{
@@ -37,10 +38,34 @@
 	foreach x of varlist c_qn506 c_qn507 c_qn501 c_qn502 c_qn504 {
 		recode `x'  (1=5)(2=4)(3=3)(4=2)(5=1)
 	}
-	egen self_control =rowmean(c_qn506 c_qn507 c_qn501 c_qn502 c_qn504 c_qn503 c_qn505)
-	label var self_control "内控点"
-	tab self_control,m
-	kdensity self_control
+
+	foreach x of  varlist c_qn506 c_qn507 c_qn501 c_qn502 c_qn504 c_qn503 c_qn505{
+		recode `x' (5=2)(4=1)(3=0)(2=-1)(1=-2)
+	}
+	center c_qn506 c_qn507 c_qn501 c_qn502 c_qn504 c_qn503 c_qn505 ,prefix(z_)
+
+	egen incontrol =rowmean(z_c_qn506 z_c_qn507 z_c_qn501 z_c_qn502 z_c_qn504 z_c_qn503 z_c_qn505)
+	label var incontrol "内控综合得分"
+	tab incontrol,m
+	kdensity incontrol
+
+*经济学季刊的内外控点,拿总分做一次，拿内外控再做一次
+	todummy incontrol ,values(75) percentile
+	rename d_incontrol intrenal
+	label var intrenal "内控倾向"
+	tab intrenal
+
+	todummy incontrol ,values(25) percentile
+	sort incontrol d_incontrol
+	tab d_incontrol
+
+	recode d_incontrol (1=0)(0=1)
+	rename d_incontrol external
+	label var external "外控倾向"
+	
+	gen neutral =0 if incontrol!=.
+	replace neutral =1 if intrenal==0 & external==0
+	label var neutral "中性倾向"
 
 
 *Predetermined characteristics ：性别、民族、婚姻状况、父母受教育程度、家庭收入、省份固定效应、年龄的固定效应
@@ -108,7 +133,7 @@
 	label var moeduyear "母亲受教育年限"
 
 *家庭收入
-
+*和家庭收入相匹配
 
 *控制变量
 
@@ -132,7 +157,15 @@
 	replace obese=1 if bmi>=30
 	label var obese "肥胖"
 *机制变量，明天再弄
+
 *体育锻炼
+
+
+
+
+
+*饮食 
+	tab1 qp902_a_1 qp902_a_2 qp902_a_3 qp902_a_4 qp902_a_5 qp902_a_6 qp902_a_7 qp902_a_8,m
 
 
 *删掉变量存在缺失的样本
@@ -145,37 +178,38 @@
 	logout ,excel tex save("$output/sum") replace :sum  height weight bmi overweight obese age  $control
 
 
-*年龄和省的固定效应
-	areg weight self_control   $control i.age ,absorb(provcd)
-	outreg2 using "$output/self_bmi_fe_age",adjr2 keep(self_control  $control) bdec(3) addtext(Age_FE,Yes,Provience,Yes) tex excel replace
-	
-	areg bmi self_control  $control i.age ,absorb(provcd)
-	outreg2 using "$output/self_bmi_fe_age",adjr2 keep(self_control  $control) bdec(3) addtext(Age_FE,Yes,Provience,Yes) tex excel append
-	
-	areg overweight self_control  $control i.age ,absorb(provcd)
-	outreg2 using "$output/self_bmi_fe_age",adjr2 keep(self_control  $control) bdec(3) addtext(Age_FE,Yes,Provience,Yes) tex excel append 
-	
-	areg obese self_control  $control i.age ,absorb(provcd)
-	outreg2 using "$output/self_bmi_fe_age",adjr2 keep(self_control  $control) bdec(3) addtext(Age_FE,Yes,Provience,Yes) tex excel append 
-
-
 *仅省份的固定效应，年龄按照控制变量出现
-	areg weight self_control age  $control  ,absorb(provcd)
-	outreg2 using "$output/self_bmi_fe",adjr2 keep(self_control age $control) bdec(3) addtext(Provience,Yes) tex excel replace
+	areg weight incontrol age  $control  ,absorb(provcd)
+	outreg2 using "$output/self_bmi_fe",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel replace
 	
-	areg bmi self_control age $control  ,absorb(provcd)
-	outreg2 using "$output/self_bmi_fe",adjr2 keep(self_control age $control) bdec(3) addtext(Provience,Yes) tex excel append
+	areg bmi incontrol age $control  ,absorb(provcd)
+	outreg2 using "$output/self_bmi_fe",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel append
 	
-	areg overweight self_control age  $control  ,absorb(provcd)
-	outreg2 using "$output/self_bmi_fe",adjr2 keep(self_control age $control) bdec(3) addtext(Provience,Yes) tex excel append 
+	areg overweight incontrol age  $control  ,absorb(provcd)
+	outreg2 using "$output/self_bmi_fe",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel append 
 	
-	areg obese self_control age  $control  ,absorb(provcd)
-	outreg2 using "$output/self_bmi_fe",adjr2 keep(self_control age $control) bdec(3) addtext(Provience,Yes) tex excel append 
+	areg obese incontrol age  $control  ,absorb(provcd)
+	outreg2 using "$output/self_bmi_fe",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel append 
 
 
-*尝试使用Lewbel IV进行因果推断
+*分项回归
+
+	areg weight intrenal external age  $control  ,absorb(provcd)
+	outreg2 using "$output/self_bmi_fe",adjr2 keep(intrenal external age $control) bdec(3) addtext(Provience,Yes) tex excel append
+	
+	areg bmi intrenal external age $control  ,absorb(provcd)
+	outreg2 using "$output/self_bmi_fe",adjr2 keep(intrenal external age $control) bdec(3) addtext(Provience,Yes) tex excel append
+	
+	areg overweight intrenal external age  $control  ,absorb(provcd)
+	outreg2 using "$output/self_bmi_fe",adjr2 keep(intrenal external age $control) bdec(3) addtext(Provience,Yes) tex excel append 
+	
+	areg obese intrenal external age  $control  ,absorb(provcd)
+	outreg2 using "$output/self_bmi_fe",adjr2 keep(intrenal external age $control) bdec(3) addtext(Provience,Yes) tex excel append 
 
 
+
+
+*不同性别
 
 
 
