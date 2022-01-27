@@ -206,9 +206,28 @@
 	areg obese intrenal external age  $control  ,absorb(provcd)
 	outreg2 using "$output/self_bmi_fe",adjr2 keep(intrenal external age $control) bdec(3) addtext(Provience,Yes) tex excel append 
 
+*非参数绘图
+*fig 
+	twoway lowess weight incontrol , bwidth(10) xtitle("locus of control")  ytitle("Weight") title("体重")
+	graph save "$output/weight.gph",replace 
+	graph export "$output/weight.png",replace 
+	
 
+	twoway lowess bmi incontrol , bwidth(10) xtitle("locus of control")  ytitle("Body Mass Index ")  title("BMI")
+	graph save "$output/bmi.gph",replace 
+	graph export "$output/bmi.png",replace 
+	
+	twoway lowess overweight incontrol , bwidth(10) xtitle("locus of control")  ytitle("Overweight") title("超重")
+	graph save "$output/overweight.gph",replace  
+	graph export "$output/overweight.png",replace 
+	
 
-
+	twoway lowess obese incontrol , bwidth(10) xtitle("locus of control")  ytitle("Obese")  title("肥胖")
+	graph save "$output/obese.gph",replace 
+	graph export "$output/obese.png",replace 
+	
+	graph combine "$output/weight.gph" "$output/bmi.gph" "$output/overweight.gph" "$output/obese.gph"
+	graph export "$output/lowess.png",replace 
 *不同性别
 
 
