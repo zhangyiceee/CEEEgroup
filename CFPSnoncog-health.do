@@ -49,7 +49,7 @@
 	tab incontrol,m
 	kdensity incontrol
 
-*经济学季刊的内外控点,拿总分做一次，拿内外控再做一次
+*经济学季刊的内外控点,拿总分做一次,拿内外控再做一次
 	todummy incontrol ,values(75) percentile
 	rename d_incontrol intrenal
 	label var intrenal "内控倾向"
@@ -138,6 +138,7 @@
 *控制变量
 
 	global control "gender han married divorce widow eduyear faeduyear moeduyear "
+	global control1 " han married divorce widow eduyear faeduyear moeduyear "
 
 *被解释变量：BMI
 *BMI
@@ -156,7 +157,7 @@
 	gen obese =0 if bmi>0
 	replace obese=1 if bmi>=30
 	label var obese "肥胖"
-*机制变量，明天再弄
+*机制变量,明天再弄
 
 *体育锻炼
 
@@ -178,7 +179,7 @@
 	logout ,excel tex save("$output/sum") replace :sum  height weight bmi overweight obese age  $control
 
 
-*仅省份的固定效应，年龄按照控制变量出现
+*仅省份的固定效应,年龄按照控制变量出现
 	areg weight incontrol age  $control  ,absorb(provcd)
 	outreg2 using "$output/self_bmi_fe",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel replace
 	
@@ -191,9 +192,7 @@
 	areg obese incontrol age  $control  ,absorb(provcd)
 	outreg2 using "$output/self_bmi_fe",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel append 
 
-
-*分项回归
-
+*主要解释变量分项回归
 	areg weight intrenal external age  $control  ,absorb(provcd)
 	outreg2 using "$output/self_bmi_fe",adjr2 keep(intrenal external age $control) bdec(3) addtext(Provience,Yes) tex excel append
 	
@@ -206,12 +205,47 @@
 	areg obese intrenal external age  $control  ,absorb(provcd)
 	outreg2 using "$output/self_bmi_fe",adjr2 keep(intrenal external age $control) bdec(3) addtext(Provience,Yes) tex excel append 
 
+
+*不同性别
+*分性别的影响
+	areg weight incontrol age  $control1 if gender==1 ,absorb(provcd)
+	outreg2 using "$output/self_bmi_gender",adjr2 keep(incontrol  age $control1) bdec(3) addtext(Provience,Yes,Male,Yes) tex excel replace
+	areg weight incontrol age  $control1 if gender==0 ,absorb(provcd)
+	outreg2 using "$output/self_bmi_gender",adjr2 keep(incontrol  age $control1) bdec(3) addtext(Provience,Yes,Male,No) tex excel append
+	areg weight intrenal external age  $control1 if gender==1 ,absorb(provcd)
+	outreg2 using "$output/self_bmi_gender",adjr2 keep(intrenal external age $control1) bdec(3) addtext(Provience,Yes,Male,Yes) tex excel append
+	areg weight intrenal external age  $control1 if gender==0 ,absorb(provcd)
+	outreg2 using "$output/self_bmi_gender",adjr2 keep(intrenal external age $control1) bdec(3) addtext(Provience,Yes,Male,No) tex excel append
+	areg bmi incontrol age  $control1 if gender==1 ,absorb(provcd)
+	outreg2 using "$output/self_bmi_gender",adjr2 keep(incontrol  age $control1) bdec(3) addtext(Provience,Yes,Male,Yes) tex excel append
+	areg bmi incontrol age  $control1 if gender==0 ,absorb(provcd)
+	outreg2 using "$output/self_bmi_gender",adjr2 keep(incontrol  age $control1) bdec(3) addtext(Provience,Yes,Male,No) tex excel append
+	areg bmi intrenal external age  $control1 if gender==1 ,absorb(provcd)
+	outreg2 using "$output/self_bmi_gender",adjr2 keep(intrenal external age $control1) bdec(3) addtext(Provience,Yes,Male,Yes) tex excel append
+	areg bmi intrenal external age  $control1 if gender==0 ,absorb(provcd)
+	outreg2 using "$output/self_bmi_gender",adjr2 keep(intrenal external age $control1) bdec(3) addtext(Provience,Yes,Male,No) tex excel append
+	areg overweight incontrol age  $control1 if gender==1 ,absorb(provcd)
+	outreg2 using "$output/self_bmi_gender",adjr2 keep(incontrol  age $control1) bdec(3) addtext(Provience,Yes,Male,Yes) tex excel append
+	areg overweight incontrol age  $control1 if gender==0 ,absorb(provcd)
+	outreg2 using "$output/self_bmi_gender",adjr2 keep(incontrol  age $control1) bdec(3) addtext(Provience,Yes,Male,No) tex excel append
+	areg overweight intrenal external age  $control1 if gender==1 ,absorb(provcd)
+	outreg2 using "$output/self_bmi_gender",adjr2 keep(intrenal external age $control1) bdec(3) addtext(Provience,Yes,Male,Yes) tex excel append
+	areg overweight intrenal external age  $control1 if gender==0 ,absorb(provcd)
+	outreg2 using "$output/self_bmi_gender",adjr2 keep(intrenal external age $control1) bdec(3) addtext(Provience,Yes,Male,No) tex excel append
+	areg obese incontrol age  $control1 if gender==1 ,absorb(provcd)
+	outreg2 using "$output/self_bmi_gender",adjr2 keep(incontrol  age $control1) bdec(3) addtext(Provience,Yes,Male,Yes) tex excel append
+	areg obese incontrol age  $control1 if gender==0 ,absorb(provcd)
+	outreg2 using "$output/self_bmi_gender",adjr2 keep(incontrol  age $control1) bdec(3) addtext(Provience,Yes,Male,No) tex excel append
+	areg obese intrenal external age  $control1 if gender==1 ,absorb(provcd)
+	outreg2 using "$output/self_bmi_gender",adjr2 keep(intrenal external age $control1) bdec(3) addtext(Provience,Yes,Male,Yes) tex excel append
+	areg obese intrenal external age  $control1 if gender==0 ,absorb(provcd)
+	outreg2 using "$output/self_bmi_gender",adjr2 keep(intrenal external age $control1) bdec(3) addtext(Provience,Yes,Male,No) tex excel append
+	
 *非参数绘图
-*fig 
+*Figure
 	twoway lowess weight incontrol , bwidth(10) xtitle("locus of control")  ytitle("Weight") title("体重")
 	graph save "$output/weight.gph",replace 
 	graph export "$output/weight.png",replace 
-	
 
 	twoway lowess bmi incontrol , bwidth(10) xtitle("locus of control")  ytitle("Body Mass Index ")  title("BMI")
 	graph save "$output/bmi.gph",replace 
@@ -228,7 +262,9 @@
 	
 	graph combine "$output/weight.gph" "$output/bmi.gph" "$output/overweight.gph" "$output/obese.gph"
 	graph export "$output/lowess.png",replace 
-*不同性别
+
+
+*对行为的影响
 
 
 
