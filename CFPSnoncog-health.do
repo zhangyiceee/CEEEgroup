@@ -157,17 +157,33 @@
 	gen obese =0 if bmi>0
 	replace obese=1 if bmi>=30
 	label var obese "肥胖"
-*机制变量,明天再弄
+*机制变量
+*吸烟、锻炼
+	tab qq2,m
+	codebook qq2
+	gen smoking =.
+	replace smoking =1 if qq2==1
+	replace smoking =0 if qq2==0
+	label var smoking "是否吸烟 "
+*锻炼 上星期锻炼了几次
+	tab qp8,m
+	gen exercise=.
+	replace exercise=1 if qp8 >=1 &qp8 <=20
+	replace exercise=0 if qp8==0
+	label var exercise "过去一周是否锻炼"
+	tab exercise,m
 
-*体育锻炼
 
-
-
-
-
-*饮食 
-	tab1 qp902_a_1 qp902_a_2 qp902_a_3 qp902_a_4 qp902_a_5 qp902_a_6 qp902_a_7 qp902_a_8,m
-
+*饮食 Healthy Eating Index ：饮食多样性
+	tab1 qp901_s_1 qp901_s_2 qp901_s_3 qp901_s_4 qp901_s_5 qp901_s_6 qp901_s_7 qp901_s_8 qp901_s_9,m
+	codebook qp901_s_2
+	foreach x of varlist qp901_s_1 qp901_s_2 qp901_s_3 qp901_s_4 qp901_s_5 qp901_s_6 qp901_s_7 qp901_s_8 qp901_s_9{
+		gen c_`x'=`x'
+		recode c_`x' (-8 =0) (1 2 3 4 5 6 7 8=1) (78 -1=.)
+	}
+	egen health_eating=rowtotal(c_qp901_s_1 c_qp901_s_2 c_qp901_s_3 c_qp901_s_4 c_qp901_s_5 c_qp901_s_6 c_qp901_s_7 c_qp901_s_8 c_qp901_s_9)
+	replace health_eating=. if qp901_s_1==78
+	tab health_eating,m
 
 *删掉变量存在缺失的样本
 	egen miss=rowmiss(height weight bmi overweight obese $control age provcd)
