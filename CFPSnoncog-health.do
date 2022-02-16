@@ -198,17 +198,6 @@
 *仅省份的固定效应,年龄按照控制变量出现
 	areg weight incontrol age  $control  ,absorb(provcd)
 	outreg2 using "$output/self_bmi_fe",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel replace
-	
-	areg bmi incontrol age $control  ,absorb(provcd)
-	outreg2 using "$output/self_bmi_fe",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel append
-	
-	areg overweight incontrol age  $control  ,absorb(provcd)
-	outreg2 using "$output/self_bmi_fe",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel append 
-	
-	areg obese incontrol age  $control  ,absorb(provcd)
-	outreg2 using "$output/self_bmi_fe",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel append 
-
-*主要解释变量分项回归
 	areg weight intrenal external age  $control  ,absorb(provcd)
 	outreg2 using "$output/self_bmi_fe",adjr2 keep(intrenal external age $control) bdec(3) addtext(Provience,Yes) tex excel append
 	
