@@ -186,7 +186,7 @@
 	tab health_eating,m
 
 *删掉变量存在缺失的样本
-	egen miss=rowmiss(height weight bmi overweight obese $control age provcd)
+	egen miss=rowmiss(height weight bmi overweight obese $control age provcd smoking exercise health_eating)
 	label var miss "样本缺失变量的个数"
 	tab miss,m
 	keep if miss==0
