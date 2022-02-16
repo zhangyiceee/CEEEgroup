@@ -278,6 +278,18 @@
 *对行为的影响
 
 
+	areg smoking incontrol age  $control  ,absorb(provcd)
+	outreg2 using "$output/jz",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel replace
+	areg smoking intrenal external age  $control  ,absorb(provcd)
+	outreg2 using "$output/jz",adjr2 keep(intrenal external age $control) bdec(3) addtext(Provience,Yes) tex excel append
+	areg exercise incontrol age  $control  ,absorb(provcd)
+	outreg2 using "$output/jz",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel append
+	areg exercise intrenal external age  $control  ,absorb(provcd)
+	outreg2 using "$output/jz",adjr2 keep(intrenal external age $control) bdec(3) addtext(Provience,Yes) tex excel append
+	areg health_eating incontrol age  $control  ,absorb(provcd)
+	outreg2 using "$output/jz",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel append
+	areg health_eating intrenal external age  $control  ,absorb(provcd)
+	outreg2 using "$output/jz",adjr2 keep(intrenal external age $control) bdec(3) addtext(Provience,Yes) tex excel append
 
 
 
