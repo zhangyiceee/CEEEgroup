@@ -201,12 +201,18 @@
 	areg weight intrenal external age  $control  ,absorb(provcd)
 	outreg2 using "$output/self_bmi_fe",adjr2 keep(intrenal external age $control) bdec(3) addtext(Provience,Yes) tex excel append
 	
+	areg bmi incontrol age $control  ,absorb(provcd)
+	outreg2 using "$output/self_bmi_fe",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel append
 	areg bmi intrenal external age $control  ,absorb(provcd)
 	outreg2 using "$output/self_bmi_fe",adjr2 keep(intrenal external age $control) bdec(3) addtext(Provience,Yes) tex excel append
 	
+	areg overweight incontrol age  $control  ,absorb(provcd)
+	outreg2 using "$output/self_bmi_fe",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel append 
 	areg overweight intrenal external age  $control  ,absorb(provcd)
 	outreg2 using "$output/self_bmi_fe",adjr2 keep(intrenal external age $control) bdec(3) addtext(Provience,Yes) tex excel append 
 	
+	areg obese incontrol age  $control  ,absorb(provcd)
+	outreg2 using "$output/self_bmi_fe",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel append 
 	areg obese intrenal external age  $control  ,absorb(provcd)
 	outreg2 using "$output/self_bmi_fe",adjr2 keep(intrenal external age $control) bdec(3) addtext(Provience,Yes) tex excel append 
 
