@@ -158,6 +158,7 @@
 	replace obese=1 if bmi>=30
 	label var obese "肥胖"
 *机制变量
+
 *吸烟、锻炼
 	tab qq2,m
 	codebook qq2
@@ -215,7 +216,11 @@
 	outreg2 using "$output/self_bmi_fe",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel append 
 	areg obese intrenal external age  $control  ,absorb(provcd)
 	outreg2 using "$output/self_bmi_fe",adjr2 keep(intrenal external age $control) bdec(3) addtext(Provience,Yes) tex excel append 
+	
+*对自评健康的影响
 
+	
+	
 
 *不同性别
 *分性别的影响
@@ -266,7 +271,6 @@
 	graph save "$output/overweight.gph",replace  
 	graph export "$output/overweight.png",replace 
 	
-
 	twoway lowess obese incontrol , bwidth(10) xtitle("locus of control")  ytitle("Obese")  title("肥胖")
 	graph save "$output/obese.gph",replace 
 	graph export "$output/obese.png",replace 
@@ -276,8 +280,6 @@
 
 
 *对行为的影响
-
-
 	areg smoking incontrol age  $control  ,absorb(provcd)
 	outreg2 using "$output/jz",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel replace
 	areg smoking intrenal external age  $control  ,absorb(provcd)
@@ -290,6 +292,7 @@
 	outreg2 using "$output/jz",adjr2 keep(incontrol age $control) bdec(3) addtext(Provience,Yes) tex excel append
 	areg health_eating intrenal external age  $control  ,absorb(provcd)
 	outreg2 using "$output/jz",adjr2 keep(intrenal external age $control) bdec(3) addtext(Provience,Yes) tex excel append
+	
 
 
 
